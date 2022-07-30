@@ -15,6 +15,8 @@ grep "^This study" tara_data/TableS6.tsv \
   | sed "-es/New_18at1.1/New_18at1.1  (Wamoviricota)/" \
   | sed "-es/New_19at1.1/New_19at1.1  (Arctiviricota)/" \
   | sed '-es/"//g' \
+  | sed "-es/^  *//" \
+  | sed "-es/  */	/" \
   > edgar_results/Edgar_Table1.tsv
 
 ./inf_clustercount.py \
