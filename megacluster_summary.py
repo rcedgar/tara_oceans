@@ -31,6 +31,7 @@ while 1:
 	if MegaClusterToName[MegaCluster] == None:
 		MegaClusterToName[MegaCluster] = MegaClusterName
 
+print("Centroids\tMegaCluster")		
 for MegaCluster in range(0, 19):
 	Name = MegaClusterToName[MegaCluster]
 	Name = Name.replace('"', '')
