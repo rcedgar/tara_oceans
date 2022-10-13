@@ -9,3 +9,5 @@ The figure below was created by making charts for the histogram from `inf_cluste
 
 
 ![Figure](http://drive5.com/images/tara_oceans_figure.svg)
+
+The `tara_bowtie2_mega_counts.py` script generates per-mega-taxon counts from bowtie2 SAM files, deposited at Zenodo [https://zenodo.org/record/7194888](https://zenodo.org/record/7194888).
