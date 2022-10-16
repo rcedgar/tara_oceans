@@ -6,10 +6,11 @@ MIN_MAPQ = 0 # set to zero to avoid losing reads that map to multiple contigs
 MIN_ALN_PCT = 75
 MIN_PCTID = 90
 MIN_POLYA_RUN = 10
-MAX_POLYA_COUNT = 30
+MAX_POLYA_PCT = 50
+MIN_READ_LENGTH = 50
 
 SAMFileNames = sys.argv[1:]
-ContigToMegaFN = "contig_mega.tsv" # "/d/a/res/tara_fq/out/contig_mega.tsv"
+ContigToMegaFN = "/d/a/res/tara_geo/out/contig_mega.tsv"
 
 CIGAR_Ns = []
 CIGAR_Letters = []
@@ -111,10 +112,14 @@ def GetPolyCount_Letter(Seq, Letter):
 			Sum += RunLength
 	return Sum
 
-def GetPolyACount(Seq):
+def GetPolyAPct(Seq):
+	L = len(Seq)
+	if L == 0:
+		return 0
 	NA = GetPolyCount_Letter(Seq, 'A')
 	NT = GetPolyCount_Letter(Seq, 'T')
-	return NA + NT
+	Pct = (NA + NT)*100.0/L
+	return Pct
 
 NewLong = {}
 def Rename(New, Long):
@@ -154,6 +159,7 @@ DiscardedLowPctId = 0
 DiscardedLowMapQ = 0
 DiscardedLowCoverage = 0
 DiscardedHighPolyA = 0
+DiscardedShort = 0
 for SAMFileName in SAMFileNames:
 	sys.stderr.write(SAMFileName + "\n")
 	for Line in open(SAMFileName):
@@ -168,6 +174,10 @@ for SAMFileName in SAMFileNames:
 		ReadLabel = Fields[0]
 		Contig = Fields[2]
 		CIGAR = Fields[5]
+		ReadSeq = Fields[9]
+		if len(ReadSeq) < MIN_READ_LENGTH:
+			DiscardedShort += 1
+			continue
 
 		Contig = Contig.replace("TARA_", "")
 		Contig = Contig.replace("Tara_", "")
@@ -197,9 +207,8 @@ for SAMFileName in SAMFileNames:
 			DiscardedLowPctId += 1
 			continue
 
-		ReadSeq = Fields[9]
-		PolyA = GetPolyACount(ReadSeq)
-		if PolyA > MAX_POLYA_COUNT:
+		PolyA = GetPolyAPct(ReadSeq)
+		if PolyA > MAX_POLYA_PCT:
 			DiscardedHighPolyA += 1
 			continue
 
@@ -212,6 +221,7 @@ MegaList = list(MegaToCount.keys())
 print("Total\t%d" % TotalReads)
 print("Kept\t%d" % KeptReads)
 print("DiscardedLowMapQ\t%d\t%.1f%%" % (DiscardedLowMapQ, (DiscardedLowMapQ*100.0)/TotalReads))
+print("DiscardedShort\t%d\t%.1f%%" % (DiscardedShort, (DiscardedShort*100.0)/TotalReads))
 print("DiscardedHighPolyA\t%d\t%.1f%%" % (DiscardedHighPolyA, (DiscardedHighPolyA*100.0)/TotalReads))
 print("DiscardedLowCoverage\t%d\t%.1f%%" % (DiscardedLowCoverage, (DiscardedLowCoverage*100.0)/TotalReads))
 print("DiscardedLowPctId\t%d\t%.1f%%" % (DiscardedLowPctId, (DiscardedLowPctId*100.0)/TotalReads))
