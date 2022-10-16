@@ -10,7 +10,7 @@ MAX_POLYA_PCT = 50
 MIN_READ_LENGTH = 50
 
 SAMFileNames = sys.argv[1:]
-ContigToMegaFN = "/d/a/res/tara_geo/out/contig_mega.tsv"
+ContigToMegaFN = "contig_mega.tsv"
 
 CIGAR_Ns = []
 CIGAR_Letters = []
