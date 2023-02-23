@@ -1,1 +1,1 @@
-FASTA and binary indexes for bowtie2 and diamond read mapping.
+FASTA references for bowtie2 and diamond read mapping.
